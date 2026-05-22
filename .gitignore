@@ -1,0 +1,22 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Local binaries and node dependencies
+.local/
+node_modules/
+
+# Analysis outputs and temporary files
+output/
+test_codegraph.json
