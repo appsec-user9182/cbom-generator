@@ -6,6 +6,9 @@ Rather than just listing the cryptographic algorithms used in your software, thi
 
 This tool was written with the intention to help small to medium-sized businesses and/or under-resourced security teams focus their limited time on creating a CBOM in order to identify cryptography-related weaknesses in their code. This in turn can be used to resolve potential vulnerabilities or be better prepared for a Post Quantum future that is seemingly a matter of "if" not "when."
 
+> [!IMPORTANT]
+> **Out-of-the-Box Deterministic Model**: By default, this tool runs **entirely deterministically** on your local machine using static syntax matching (AST analysis) and static call-graph pathfinding. It does not communicate with external APIs or orchestrate AI models. To scale the utility using autonomous workflows, you must define and configure your own AI orchestration layer to hook into the deterministic core modules.
+
 ## Key Capabilities
 
 * **Automated Asset Discovery**: Scans Python and Go directories to locate cryptographic primitives (such as AES, RSA, MD5, SHA-256) and generates a standard CycloneDX v1.6 Cryptographic Bill of Materials (CBOM).
@@ -108,3 +111,18 @@ When reviewing the findings, use the following guidelines:
 1. **Reachable and Insecure Algorithms**: If the tool shows that an outdated or weak algorithm (e.g., MD5, SHA-1, DES) is reachable from a public-facing entry point, this should be addressed immediately.
 2. **Reachable and Secure Algorithms**: These represent your active cryptographic footprint. Verify that the key sizes and implementation choices align with your security policies.
 3. **Unreachable Algorithms**: Cryptographic assets that are not reachable from external entry points are lower priority. They might represent unused/legacy code or internal utility functions that cannot be triggered from the outside.
+
+## Integrating AI and LLM Workflows
+
+While this utility is built entirely on local, deterministic code execution to increase reliability and accuracy, it was designed with an AI-agnostic structure that can easily be integrated into modern AI and LLM workflows. Depending on your codebase size and resources, you can scale the utility using one of two primary patterns:
+
+### Option 1: Local Deterministic Scan with Downstream LLM Interpretation (Small to Medium Repositories)
+For standard codebases, use the built-in deterministic engine as-is. Because it is local and rule-based, it runs very quickly and the code is available for you to pick apart to see any mistakes or discrepancies the tool might produce. Once the scan completes, you can feed the highly structured output files (`blast_radius.json` and `cbom.json`) into the LLM of your choice to:
+* Interpret the business and security implications of weak algorithms in your specific architecture.
+* Automatically write step-by-step remediation advice and refactoring pull requests to update insecure cryptographic primitives.
+
+### Option 2: AI Sub-Agent Enhancements (Large, Legacy, or Enterprise Codebases)
+For large-scale or highly dynamic codebases, you can deploy AI-driven sub-agents under careful human supervision to enhance the individual capabilities of Agents A, B, and C:
+* **Enhanced Agent A (Cryptographic Extraction)**: Deploy a sub-agent to statically audit files for proprietary, custom, or non-standard cryptographic wrappers, ensuring they are documented in your CBOM alongside standard libraries.
+* **Enhanced Agent B (CodeGraph Resolution)**: Deploy a sub-agent to analyze complex dependency injection patterns, resolve dynamic metaclasses, or perform sandboxed execution tracing to identify call-graph edges that static analysis misses.
+* **Enhanced Agent C (Context-Aware Security Triage)**: Deploy a sub-agent to perform automated taint analysis (verifying if user-controlled input actually reaches the weak primitive along the call chain) and automatically write custom-tailored quantum-safe replacement code.
